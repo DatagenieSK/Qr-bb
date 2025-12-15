@@ -30,7 +30,7 @@
             min-height: 100vh;
             margin: 0;
             position: relative;
-            padding: 20px; /* Padding for mobile scroll */
+            padding: 20px;
         }
 
         /* --- FLOATING EMOJI BACKGROUND --- */
@@ -106,19 +106,26 @@
             background-color: var(--btn-bg);
             color: white;
             border: 1px solid #444;
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             transition: all 0.2s;
             text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
         }
 
         .type-btn:hover {
             background-color: var(--bb-green);
             border-color: var(--bb-green);
             box-shadow: 0 0 10px var(--bb-green-glow);
+            transform: translateY(-2px);
+        }
+
+        .type-btn:active {
+            transform: translateY(0);
         }
 
         .type-btn span {
@@ -126,7 +133,8 @@
             font-size: 9px;
             opacity: 0.7;
             font-weight: normal;
-            margin-top: 2px;
+            margin-top: 3px;
+            text-transform: none;
         }
 
         /* --- INPUT FIELD --- */
@@ -137,10 +145,11 @@
             border: 2px solid transparent;
             border-radius: 8px;
             color: white;
-            font-size: 14px;
+            font-size: 16px; /* Larger font for readability */
             text-align: center;
             letter-spacing: 1px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-weight: bold;
         }
 
         input:focus {
@@ -151,7 +160,7 @@
 
         /* --- QR AREA --- */
         #qrcode {
-            margin-top: 15px;
+            margin-top: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -159,7 +168,7 @@
         }
 
         #qrcode img {
-            border: 5px solid white;
+            border: 6px solid white;
             border-radius: 8px;
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -182,20 +191,23 @@
             display: none;
             width: 100%;
             text-transform: uppercase;
+            transition: 0.2s;
         }
 
         button.download:hover {
             background-color: var(--bb-green);
             color: white;
+            box-shadow: 0 5px 15px var(--bb-green-glow);
         }
 
         /* --- FOOTER --- */
         .credit {
-            margin-top: 15px;
-            padding-top: 10px;
+            margin-top: 20px;
+            padding-top: 15px;
             border-top: 1px solid #333;
-            font-size: 10px;
+            font-size: 11px;
             color: #666;
+            letter-spacing: 1px;
         }
         .credit span { color: var(--bb-green); font-weight: bold; }
 
@@ -222,7 +234,7 @@
                 </button>
                 <button class="type-btn" onclick="generateRandom('MED')">
                     Medium PBM
-                    <span>(10 Digits)</span>
+                    <span>(PBM + 10 Digits)</span>
                 </button>
                 <button class="type-btn" onclick="generateRandom('HED')">
                     HED
@@ -241,7 +253,7 @@
             <input type="text" id="textInput" placeholder="...or type manual text" autocomplete="off">
             
             <div id="qrcode">
-                <span style="color:#555; font-size:12px; font-style:italic;">Select a type above</span>
+                <span style="color:#555; font-size:12px; font-style:italic;">Select a type above to start</span>
             </div>
             
             <button id="dlBtn" class="download" onclick="downloadQR()">Download Image ⬇️</button>
@@ -267,7 +279,6 @@
 
         // 1. Generate Random Logic
         function generateRandom(type) {
-            var randomNum = "";
             var finalCode = "";
 
             if (type === 'BBNOW') {
@@ -275,8 +286,8 @@
                 finalCode = "BB" + getRandomDigits(9);
             } 
             else if (type === 'MED') {
-                // Just 10 Digits (e.g., 1500356690)
-                finalCode = getRandomDigits(10);
+                // UPDATED: PBM- + 10 Digits (e.g., PBM-4507254263)
+                finalCode = "PBM-" + getRandomDigits(10);
             } 
             else if (type === 'HED') {
                 // PBHM- + 10 Digits (e.g., PBHM-1500457173)
@@ -321,7 +332,7 @@
             if (text.trim() !== "") {
                 makeQR(text);
             } else {
-                qrcodeContainer.innerHTML = '<span style="color:#555; font-size:12px;">Waiting...</span>';
+                qrcodeContainer.innerHTML = '<span style="color:#555; font-size:12px; font-style:italic;">Select a type above to start</span>';
                 dlBtn.style.display = "none";
             }
         });
@@ -331,10 +342,10 @@
             var img = document.querySelector("#qrcode img");
             if (img) {
                 var link = document.createElement("a");
-                // Use the text in the input as the filename (sanitized)
-                var fileName = inputField.value.replace(/[^a-z0-9]/gi, '_').substring(0, 15);
+                // Use the text in the input as the filename
+                var fileName = inputField.value.replace(/[^a-z0-9]/gi, '_').substring(0, 20);
                 link.href = img.src;
-                link.download = fileName + "_QR.png";
+                link.download = fileName + ".png";
                 link.click();
             }
         }
