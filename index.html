@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BB QR Pro - Sk Alauddin</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --bb-green: #84c225;
+            --bb-green-glow: rgba(132, 194, 37, 0.4);
+            --bg-dark: #121212;
+            --card-dark: #1e1e1e;
+            --text-light: #e0e0e0;
+            --input-bg: #2c2c2c;
+            --btn-bg: #333;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            position: relative;
+            padding: 20px; /* Padding for mobile scroll */
+        }
+
+        /* --- FLOATING EMOJI BACKGROUND --- */
+        .emoji-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.15;
+            overflow: hidden;
+        }
+        
+        .floating-emoji {
+            position: absolute;
+            font-size: 3rem;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        /* --- MAIN CARD --- */
+        .card {
+            background: var(--card-dark);
+            width: 100%;
+            max-width: 400px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            border: 1px solid #333;
+            animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HEADER --- */
+        .header {
+            background: linear-gradient(135deg, var(--bb-green), #6a9e1b);
+            color: #fff;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        /* --- BUTTON GRID --- */
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-full {
+            grid-column: span 2;
+        }
+
+        .type-btn {
+            background-color: var(--btn-bg);
+            color: white;
+            border: 1px solid #444;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .type-btn:hover {
+            background-color: var(--bb-green);
+            border-color: var(--bb-green);
+            box-shadow: 0 0 10px var(--bb-green-glow);
+        }
+
+        .type-btn span {
+            display: block;
+            font-size: 9px;
+            opacity: 0.7;
+            font-weight: normal;
+            margin-top: 2px;
+        }
+
+        /* --- INPUT FIELD --- */
+        input {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--input-bg);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            text-align: center;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--bb-green);
+            background-color: #333;
+        }
+
+        /* --- QR AREA --- */
+        #qrcode {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 140px;
+        }
+
+        #qrcode img {
+            border: 5px solid white;
+            border-radius: 8px;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* --- DOWNLOAD BUTTON --- */
+        button.download {
+            margin-top: 20px;
+            padding: 12px;
+            background-color: transparent;
+            color: var(--bb-green);
+            border: 2px solid var(--bb-green);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            display: none;
+            width: 100%;
+            text-transform: uppercase;
+        }
+
+        button.download:hover {
+            background-color: var(--bb-green);
+            color: white;
+        }
+
+        /* --- FOOTER --- */
+        .credit {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #333;
+            font-size: 10px;
+            color: #666;
+        }
+        .credit span { color: var(--bb-green); font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <div class="emoji-bg">
+        <div class="floating-emoji" style="top: 10%; left: 10%;">🥦</div>
+        <div class="floating-emoji" style="top: 20%; right: 15%;">🥕</div>
+        <div class="floating-emoji" style="bottom: 15%; left: 20%;">🛒</div>
+        <div class="floating-emoji" style="bottom: 30%; right: 10%;">🍎</div>
+    </div>
+
+    <div class="card">
+        <div class="header">⚡ QR Generator Pro</div>
+        
+        <div class="content">
+            
+            <div class="btn-grid">
+                <button class="type-btn" onclick="generateRandom('BBNOW')">
+                    BB Now
+                    <span>(BB + 9 Digits)</span>
+                </button>
+                <button class="type-btn" onclick="generateRandom('MED')">
+                    Medium PBM
+                    <span>(10 Digits)</span>
+                </button>
+                <button class="type-btn" onclick="generateRandom('HED')">
+                    HED
+                    <span>(PBHM + 10 Digits)</span>
+                </button>
+                <button class="type-btn" onclick="generateRandom('SMALL')">
+                    Small
+                    <span>(PBS + 10 Digits)</span>
+                </button>
+                <button class="type-btn btn-full" onclick="generateRandom('LARGE')">
+                    Large
+                    <span>(PBL + 10 Digits)</span>
+                </button>
+            </div>
+
+            <input type="text" id="textInput" placeholder="...or type manual text" autocomplete="off">
+            
+            <div id="qrcode">
+                <span style="color:#555; font-size:12px; font-style:italic;">Select a type above</span>
+            </div>
+            
+            <button id="dlBtn" class="download" onclick="downloadQR()">Download Image ⬇️</button>
+
+            <div class="credit">MADE BY <span>SK ALAUDDIN</span></div>
+        </div>
+    </div>
+
+    <script>
+        var qrcodeContainer = document.getElementById("qrcode");
+        var dlBtn = document.getElementById("dlBtn");
+        var inputField = document.getElementById("textInput");
+
+        // Helper: Generate Random Number String of length N
+        function getRandomDigits(length) {
+            var result = '';
+            var characters = '0123456789';
+            for (var i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+
+        // 1. Generate Random Logic
+        function generateRandom(type) {
+            var randomNum = "";
+            var finalCode = "";
+
+            if (type === 'BBNOW') {
+                // BB + 9 Digits (e.g., BB755370116)
+                finalCode = "BB" + getRandomDigits(9);
+            } 
+            else if (type === 'MED') {
+                // Just 10 Digits (e.g., 1500356690)
+                finalCode = getRandomDigits(10);
+            } 
+            else if (type === 'HED') {
+                // PBHM- + 10 Digits (e.g., PBHM-1500457173)
+                finalCode = "PBHM-" + getRandomDigits(10);
+            } 
+            else if (type === 'LARGE') {
+                // PBL- + 10 Digits (e.g., PBL-1500021246)
+                finalCode = "PBL-" + getRandomDigits(10);
+            } 
+            else if (type === 'SMALL') {
+                // PBS- + 10 Digits (e.g., PBS-5012654367)
+                finalCode = "PBS-" + getRandomDigits(10);
+            }
+
+            // Put text in box
+            inputField.value = finalCode;
+            
+            // Generate QR
+            makeQR(finalCode);
+        }
+
+        // 2. Core QR Maker Function
+        function makeQR(text) {
+            qrcodeContainer.innerHTML = ""; // Clear old
+            
+            if(text) {
+                new QRCode(qrcodeContainer, {
+                    text: text,
+                    width: 128,
+                    height: 128,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+                dlBtn.style.display = "block";
+            }
+        }
+
+        // 3. Manual Typing Listener
+        inputField.addEventListener("input", function() {
+            var text = inputField.value;
+            if (text.trim() !== "") {
+                makeQR(text);
+            } else {
+                qrcodeContainer.innerHTML = '<span style="color:#555; font-size:12px;">Waiting...</span>';
+                dlBtn.style.display = "none";
+            }
+        });
+
+        // 4. Download Function
+        function downloadQR() {
+            var img = document.querySelector("#qrcode img");
+            if (img) {
+                var link = document.createElement("a");
+                // Use the text in the input as the filename (sanitized)
+                var fileName = inputField.value.replace(/[^a-z0-9]/gi, '_').substring(0, 15);
+                link.href = img.src;
+                link.download = fileName + "_QR.png";
+                link.click();
+            }
+        }
+    </script>
+</body>
+</html>
