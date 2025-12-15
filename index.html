@@ -93,13 +93,9 @@
         /* --- BUTTON GRID --- */
         .btn-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr; /* Two equal columns */
             gap: 10px;
             margin-bottom: 20px;
-        }
-
-        .btn-full {
-            grid-column: span 2;
         }
 
         .type-btn {
@@ -145,7 +141,7 @@
             border: 2px solid transparent;
             border-radius: 8px;
             color: white;
-            font-size: 16px; /* Larger font for readability */
+            font-size: 16px;
             text-align: center;
             letter-spacing: 1px;
             margin-bottom: 15px;
@@ -244,9 +240,13 @@
                     Small
                     <span>(PBS + 10 Digits)</span>
                 </button>
-                <button class="type-btn btn-full" onclick="generateRandom('LARGE')">
+                <button class="type-btn" onclick="generateRandom('LARGE')">
                     Large
                     <span>(PBL + 10 Digits)</span>
+                </button>
+                <button class="type-btn" onclick="generateRandom('SLOT')">
+                    Slot QR
+                    <span>(BNxx-POxx)</span>
                 </button>
             </div>
 
@@ -282,24 +282,28 @@
             var finalCode = "";
 
             if (type === 'BBNOW') {
-                // BB + 9 Digits (e.g., BB755370116)
+                // BB + 9 Digits
                 finalCode = "BB" + getRandomDigits(9);
             } 
             else if (type === 'MED') {
-                // UPDATED: PBM- + 10 Digits (e.g., PBM-4507254263)
+                // PBM- + 10 Digits
                 finalCode = "PBM-" + getRandomDigits(10);
             } 
             else if (type === 'HED') {
-                // PBHM- + 10 Digits (e.g., PBHM-1500457173)
+                // PBHM- + 10 Digits
                 finalCode = "PBHM-" + getRandomDigits(10);
             } 
             else if (type === 'LARGE') {
-                // PBL- + 10 Digits (e.g., PBL-1500021246)
+                // PBL- + 10 Digits
                 finalCode = "PBL-" + getRandomDigits(10);
             } 
             else if (type === 'SMALL') {
-                // PBS- + 10 Digits (e.g., PBS-5012654367)
+                // PBS- + 10 Digits
                 finalCode = "PBS-" + getRandomDigits(10);
+            }
+            else if (type === 'SLOT') {
+                // BN + 2 Digits + -PO + 2 Digits (e.g. BN45-PO98)
+                finalCode = "BN" + getRandomDigits(2) + "-PO" + getRandomDigits(2);
             }
 
             // Put text in box
