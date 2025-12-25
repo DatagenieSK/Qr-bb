@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BB QR Pro - Sk Alauddin</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    
+   
     <style>
         /* --- VARIABLES & RESET --- */
         :root {
@@ -42,7 +42,7 @@
             opacity: 0.15;
             overflow: hidden;
         }
-        
+       
         .floating-emoji {
             position: absolute;
             font-size: 3rem;
@@ -59,7 +59,7 @@
         .card {
             background: var(--card-dark);
             width: 100%;
-            max-width: 420px; /* Slightly wider for new buttons */
+            max-width: 400px;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
@@ -102,20 +102,15 @@
             background-color: var(--btn-bg);
             color: white;
             border: 1px solid #444;
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             transition: all 0.2s;
             text-transform: uppercase;
             position: relative;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 50px;
         }
 
         .type-btn:hover {
@@ -132,11 +127,10 @@
         .type-btn span {
             display: block;
             font-size: 9px;
-            opacity: 0.6;
+            opacity: 0.7;
             font-weight: normal;
             margin-top: 3px;
             text-transform: none;
-            letter-spacing: 0.5px;
         }
 
         /* --- INPUT FIELD --- */
@@ -147,9 +141,9 @@
             border: 2px solid transparent;
             border-radius: 8px;
             color: white;
-            font-size: 14px;
+            font-size: 16px;
             text-align: center;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             margin-bottom: 15px;
             font-weight: bold;
         }
@@ -202,7 +196,7 @@
             box-shadow: 0 5px 15px var(--bb-green-glow);
         }
 
-        /* --- FOOTER --- */
+       
         .credit {
             margin-top: 20px;
             padding-top: 15px;
@@ -226,9 +220,9 @@
 
     <div class="card">
         <div class="header">⚡ QR Generator Pro</div>
-        
+       
         <div class="content">
-            
+           
             <div class="btn-grid">
                 <button class="type-btn" onclick="generateRandom('BBNOW')">
                     BB Now
@@ -254,22 +248,30 @@
                     Slot QR
                     <span>(BNxx-POxx)</span>
                 </button>
-                <button class="type-btn" onclick="generateRandom('Gel')">
+<button class="type-btn" onclick="generateRandom('Gel')">
                     Gel Pad
-                    <span>(CXXXXPCM)</span>
+                    <span>(PCM-BLU-SM-CXXXXPCM)</span>
                 </button>
-                <button class="type-btn" onclick="generateRandom('IN')">
+<button class="type-btn" onclick="generateRandom('IN')">
                     Insulated Bag
-                    <span>(GPxx-IN-IBG-Exxxx)</span>
+                    <span>(GP-)</span>
+                </button>
+<button class="type-btn" onclick="generateRandom('BL')">
+                    Bluk
+                    <span>(GP-)</span>
+                </button>
+<button class="type-btn" onclick="generateRandom('DS')">
+                    DISPATCH
+                    <span>(Z-03-E-3)</span>
                 </button>
             </div>
 
             <input type="text" id="textInput" placeholder="...or type manual text" autocomplete="off">
-            
+           
             <div id="qrcode">
                 <span style="color:#555; font-size:12px; font-style:italic;">Select a type above to start</span>
             </div>
-            
+           
             <button id="dlBtn" class="download" onclick="downloadQR()">Download Image ⬇️</button>
 
             <div class="credit">MADE BY <span>SK ALAUDDIN</span></div>
@@ -298,44 +300,55 @@
             if (type === 'BBNOW') {
                 // BB + 9 Digits
                 finalCode = "BB" + getRandomDigits(9);
-            } 
+            }
             else if (type === 'MED') {
                 // PBM- + 10 Digits
                 finalCode = "PBM-" + getRandomDigits(10);
-            } 
+            }
             else if (type === 'HED') {
                 // PBHM- + 10 Digits
                 finalCode = "PBHM-" + getRandomDigits(10);
-            } 
+            }
             else if (type === 'LARGE') {
                 // PBL- + 10 Digits
                 finalCode = "PBL-" + getRandomDigits(10);
-            } 
+            }
             else if (type === 'SMALL') {
                 // PBS- + 10 Digits
                 finalCode = "PBS-" + getRandomDigits(10);
             }
             else if (type === 'SLOT') {
                 // BN + 2 Digits + -PO + 2 Digits (e.g. BN45-PO98)
-                finalCode = "BN" + getRandomDigits(2) + "-PO" + getRandomDigits(2);
+                finalCode = "BN" + getRandomDigits(2) + "-PO" + "01";
             }
-            else if (type === 'Gel') {
-                // Format: PCM-BLU-SM-C + 4 digits + PCM
-                finalCode = "PCM-BLU-SM-C" + getRandomDigits(4) + "PCM";
+   else if (type === 'Gel') {
+                // BN + 2 Digits + -PO + 2 Digits (e.g. BN45-PO98)
+                finalCode = "PCM-BLU-SM-C" + getRandomDigits(4);
             }
-            else if (type === 'IN') {
-                // Format: GP + 2 digits + -IN-IBG-E + 4 digits
+    else if (type === 'IN') {
+                // BN + 2 Digits + -PO + 2 Digits (e.g. BN45-PO98)
                 finalCode = "GP" + getRandomDigits(2) + "-IN-IBG-E" + getRandomDigits(4);
             }
+    else if (type === 'BL') {
+                // BN + 2 Digits + -PO + 2 Digits (e.g. BN45-PO98)
+                finalCode = "GP" + getRandomDigits(2) + "-KL-BC-A" + getRandomDigits(4);
+            }
+    else if (type === 'DS') {
+                // BN + 2 Digits + -PO + 2 Digits (e.g. BN45-PO98)
+                finalCode = "Z-03-E-3";
+            }
 
+           
             inputField.value = finalCode;
+           
+            // Generate QR
             makeQR(finalCode);
         }
 
-        // 2. Generate QR Logic
+       
         function makeQR(text) {
             qrcodeContainer.innerHTML = ""; // Clear old
-            
+           
             if(text) {
                 new QRCode(qrcodeContainer, {
                     text: text,
@@ -349,7 +362,6 @@
             }
         }
 
-        // 3. Manual Typing Listener
         inputField.addEventListener("input", function() {
             var text = inputField.value;
             if (text.trim() !== "") {
@@ -360,13 +372,12 @@
             }
         });
 
-        // 4. Download Function
         function downloadQR() {
             var img = document.querySelector("#qrcode img");
             if (img) {
                 var link = document.createElement("a");
-                // Use the text in the input as the filename (sanitize to allow underscores/numbers only)
-                var fileName = inputField.value.replace(/[^a-z0-9]/gi, '_').substring(0, 30);
+                // Use the text in the input as the filename
+                var fileName = inputField.value.replace(/[^a-z0-9]/gi, '_').substring(0, 20);
                 link.href = img.src;
                 link.download = fileName + ".png";
                 link.click();
@@ -375,3 +386,5 @@
     </script>
 </body>
 </html>
+
+
