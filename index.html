@@ -248,25 +248,25 @@
                     Slot QR
                     <span>(BNxx-POxx)</span>
                 </button>
-<button class="type-btn" onclick="generateRandom('Gel')">
+                <button class="type-btn" onclick="generateRandom('Gel')">
                     Gel Pad
-                    <span>(PCM-BLU-SM-CXXXXPCM)</span>
+                    <span>(PCM-BLU-SM-C...)</span>
                 </button>
-<button class="type-btn" onclick="generateRandom('IN')">
+                <button class="type-btn" onclick="generateRandom('IN')">
                     Insulated Bag
                     <span>(GP-)</span>
                 </button>
-<button class="type-btn" onclick="generateRandom('BL')">
+                <button class="type-btn" onclick="generateRandom('BL')">
                     Bluk
                     <span>(GP-)</span>
                 </button>
-<button class="type-btn" onclick="generateRandom('DS')">
+                <button class="type-btn" onclick="generateRandom('DS')">
                     DISPATCH
                     <span>(Z-03-E-3)</span>
                 </button>
             </div>
 
-            <input type="text" id="textInput" placeholder="...or type manual text" autocomplete="off">
+            <input type="text" id="textInput" placeholder="Type A01B2 for A-01-B-2..." autocomplete="off">
            
             <div id="qrcode">
                 <span style="color:#555; font-size:12px; font-style:italic;">Select a type above to start</span>
@@ -283,7 +283,7 @@
         var dlBtn = document.getElementById("dlBtn");
         var inputField = document.getElementById("textInput");
 
-        // Helper: Generate Random Number String of length N
+        // Helper: Generate Random Number String
         function getRandomDigits(length) {
             var result = '';
             var characters = '0123456789';
@@ -293,62 +293,27 @@
             return result;
         }
 
-        // 1. Generate Random Logic
+        // --- BUTTON GENERATION LOGIC ---
         function generateRandom(type) {
             var finalCode = "";
 
-            if (type === 'BBNOW') {
-                // BB + 9 Digits
-                finalCode = "BB" + getRandomDigits(9);
-            }
-            else if (type === 'MED') {
-                // PBM- + 10 Digits
-                finalCode = "PBM-" + getRandomDigits(10);
-            }
-            else if (type === 'HED') {
-                // PBHM- + 10 Digits
-                finalCode = "PBHM-" + getRandomDigits(10);
-            }
-            else if (type === 'LARGE') {
-                // PBL- + 10 Digits
-                finalCode = "PBL-" + getRandomDigits(10);
-            }
-            else if (type === 'SMALL') {
-                // PBS- + 10 Digits
-                finalCode = "PBS-" + getRandomDigits(10);
-            }
-            else if (type === 'SLOT') {
-                // BN + 2 Digits + -PO + 2 Digits (e.g. BN45-PO98)
-                finalCode = "BN" + getRandomDigits(2) + "-PO" + "01";
-            }
-   else if (type === 'Gel') {
-                // BN + 2 Digits + -PO + 2 Digits (e.g. BN45-PO98)
-                finalCode = "PCM-BLU-SM-C" + getRandomDigits(4);
-            }
-    else if (type === 'IN') {
-                // BN + 2 Digits + -PO + 2 Digits (e.g. BN45-PO98)
-                finalCode = "GP" + getRandomDigits(2) + "-IN-IBG-E" + getRandomDigits(4);
-            }
-    else if (type === 'BL') {
-                // BN + 2 Digits + -PO + 2 Digits (e.g. BN45-PO98)
-                finalCode = "GP" + getRandomDigits(2) + "-KL-BC-A" + getRandomDigits(4);
-            }
-    else if (type === 'DS') {
-                // BN + 2 Digits + -PO + 2 Digits (e.g. BN45-PO98)
-                finalCode = "Z-03-E-3";
-            }
+            if (type === 'BBNOW') finalCode = "BB" + getRandomDigits(9);
+            else if (type === 'MED') finalCode = "PBM-" + getRandomDigits(10);
+            else if (type === 'HED') finalCode = "PBHM-" + getRandomDigits(10);
+            else if (type === 'LARGE') finalCode = "PBL-" + getRandomDigits(10);
+            else if (type === 'SMALL') finalCode = "PBS-" + getRandomDigits(10);
+            else if (type === 'SLOT') finalCode = "BN" + getRandomDigits(2) + "-PO" + "01";
+            else if (type === 'Gel') finalCode = "PCM-BLU-SM-C" + getRandomDigits(4);
+            else if (type === 'IN') finalCode = "GP" + getRandomDigits(2) + "-IN-IBG-E" + getRandomDigits(4);
+            else if (type === 'BL') finalCode = "GP" + getRandomDigits(2) + "-KL-BC-A" + getRandomDigits(4);
+            else if (type === 'DS') finalCode = "Z-03-E-3";
 
-           
             inputField.value = finalCode;
-           
-            // Generate QR
             makeQR(finalCode);
         }
 
-       
         function makeQR(text) {
-            qrcodeContainer.innerHTML = ""; // Clear old
-           
+            qrcodeContainer.innerHTML = "";
             if(text) {
                 new QRCode(qrcodeContainer, {
                     text: text,
@@ -362,10 +327,52 @@
             }
         }
 
+        // --- NEW FEATURE: AUTO-FORMAT A01B2 to A-01-B-2 ---
+        
+        function formatSmartInput(val) {
+            // 1. Clean all non-alphanumeric chars
+            var clean = val.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            
+            // 2. Logic: The pattern is 1 Letter, 2 Digits, 1 Letter, Remaining Digits
+            // Example: A01B2 -> A-01-B-2
+            
+            var part1 = clean.substring(0, 1); // A
+            var part2 = clean.substring(1, 3); // 01
+            var part3 = clean.substring(3, 4); // B
+            var part4 = clean.substring(4);    // 2...
+
+            var formatted = part1;
+            
+            if (part2) formatted += "-" + part2;
+            if (part3) formatted += "-" + part3;
+            if (part4) formatted += "-" + part4;
+
+            return formatted;
+        }
+
         inputField.addEventListener("input", function() {
-            var text = inputField.value;
-            if (text.trim() !== "") {
-                makeQR(text);
+            var currentVal = inputField.value;
+            
+            // CHECK: Only auto-format if the input starts with a Letter followed by a Number (e.g., "A0...")
+            // This prevents it from messing up "BB..." or "PCM..." which are Letter-Letter.
+            var raw = currentVal.replace(/-/g, '');
+            
+            if (raw.length >= 2) {
+                var firstChar = raw.charAt(0);
+                var secondChar = raw.charAt(1);
+                
+                // If 1st is Letter AND 2nd is Number -> Apply Format
+                if (isNaN(firstChar) && !isNaN(secondChar)) {
+                    var formatted = formatSmartInput(raw);
+                    if (inputField.value !== formatted) {
+                        inputField.value = formatted;
+                    }
+                }
+            }
+            
+            // Generate QR
+            if (inputField.value.trim() !== "") {
+                makeQR(inputField.value);
             } else {
                 qrcodeContainer.innerHTML = '<span style="color:#555; font-size:12px; font-style:italic;">Select a type above to start</span>';
                 dlBtn.style.display = "none";
@@ -376,7 +383,6 @@
             var img = document.querySelector("#qrcode img");
             if (img) {
                 var link = document.createElement("a");
-                // Use the text in the input as the filename
                 var fileName = inputField.value.replace(/[^a-z0-9]/gi, '_').substring(0, 20);
                 link.href = img.src;
                 link.download = fileName + ".png";
@@ -386,5 +392,3 @@
     </script>
 </body>
 </html>
-
-
