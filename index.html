@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BB QR Pro - Sk Alauddin</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <title>BB Schedule Pro - Sk Alauddin</title>
    
     <style>
         /* --- VARIABLES & RESET --- */
@@ -14,8 +13,6 @@
             --bg-dark: #121212;
             --card-dark: #1e1e1e;
             --text-light: #e0e0e0;
-            --input-bg: #2c2c2c;
-            --btn-bg: #333;
         }
 
         * { box-sizing: border-box; }
@@ -31,6 +28,7 @@
             margin: 0;
             position: relative;
             padding: 20px;
+            overflow: hidden;
         }
 
         /* --- FLOATING EMOJI BACKGROUND --- */
@@ -84,29 +82,231 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
+        .live-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dot {
+            width: 8px; height: 8px;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
 
         .content {
             padding: 20px;
         }
 
-        /* --- BUTTON GRID --- */
-        .btn-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* Two equal columns */
-            gap: 10px;
+        /* --- SCHEDULE MAINTAIN ANIMATION --- */
+        .maintenance-container {
+            background: #252525;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
             margin-bottom: 20px;
+            text-align: left;
         }
 
-        .type-btn {
-            background-color: var(--btn-bg);
+        .m-header {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .m-status {
+            color: var(--bb-green);
+            font-weight: bold;
+        }
+
+        .anim-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .anim-bar-fill {
+            height: 100%;
+            width: 40%;
+            background: var(--bb-green);
+            box-shadow: 0 0 10px var(--bb-green);
+            position: absolute;
+            border-radius: 3px;
+            animation: scan 2s infinite ease-in-out;
+        }
+
+        @keyframes scan {
+            0% { left: -40%; }
+            100% { left: 100%; }
+        }
+
+        .data-row {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-family: monospace;
+            color: #aaa;
+        }
+
+        /* --- VIDEO PLAYER --- */
+        .video-wrapper {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #333;
+            position: relative;
+            background: black;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Overlay to prompt user if autoplay fails */
+        .tap-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
             color: white;
-            border: 1px solid #444;
-            padding: 12px;
-            border-radius: 6px;
+            font-weight: bold;
             cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
+            z-index: 20;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+        }
+        .tap-overlay span { font-size: 30px; margin-bottom: 10px; }
+
+        /* --- FOOTER --- */
+        .credit {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+            font-size: 11px;
+            color: #666;
+            letter-spacing: 1px;
+        }
+        .credit span { color: var(--bb-green); font-weight: bold; }
+
+    </style>
+</head>
+<body onclick="enableAudio()">
+
+    <div class="emoji-bg">
+        <div class="floating-emoji" style="top: 10%; left: 10%;">🥦</div>
+        <div class="floating-emoji" style="top: 20%; right: 15%;">🥕</div>
+        <div class="floating-emoji" style="bottom: 15%; left: 20%;">🚚</div>
+        <div class="floating-emoji" style="bottom: 30%; right: 10%;">⏰</div>
+    </div>
+
+    <div class="card">
+        <div class="header">
+            <span>Dashboard</span>
+            <div class="live-badge"><div class="dot"></div> LIVE</div>
+        </div>
+       
+        <div class="content">
+           
+            <div class="maintenance-container">
+                <div class="m-header">
+                    <span>System Status</span>
+                    <span class="m-status">MAINTAINING SCHEDULE</span>
+                </div>
+                <div class="anim-bar-bg">
+                    <div class="anim-bar-fill"></div>
+                </div>
+                <div class="data-row">
+                    <span id="timer">00:00:00</span>
+                    <span>SYNC: ACTIVE</span>
+                </div>
+            </div>
+
+            <div class="video-wrapper">
+                <video id="bbVideo" playsinline loop autoplay>
+                    <source src="bb.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div id="tapOverlay" class="tap-overlay" onclick="enableAudio()">
+                    <span>🔊</span>
+                    TAP TO UNMUTE
+                </div>
+            </div>
+
+            <div class="credit">DESIGNED BY <span>SK ALAUDDIN</span></div>
+        </div>
+    </div>
+
+    <script>
+        // --- TIMER LOGIC ---
+        function updateTimer() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('timer').innerText = timeString;
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // --- AUTOPLAY LOGIC ---
+        const video = document.getElementById('bbVideo');
+        const overlay = document.getElementById('tapOverlay');
+
+        // 1. Try to play immediately on load
+        window.addEventListener('load', function() {
+            // We do NOT mute it, we try to play with sound
+            var promise = video.play();
+
+            if (promise !== undefined) {
+                promise.then(_ => {
+                    // Autoplay started!
+                    overlay.style.display = "none";
+                }).catch(error => {
+                    // Autoplay was prevented. Show overlay to ask for interaction.
+                    console.log("Autoplay blocked by browser policy. Waiting for user interaction.");
+                    overlay.style.display = "flex";
+                });
+            }
+        });
+
+        // 2. Global Unmute/Play Function
+        // This is called when the user clicks the body or the overlay
+        function enableAudio() {
+            if(video.paused || video.muted) {
+                video.muted = false;
+                video.volume = 1.0;
+                video.play();
+                overlay.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
             transition: all 0.2s;
             text-transform: uppercase;
             position: relative;
@@ -392,3 +592,4 @@
     </script>
 </body>
 </html>
+
