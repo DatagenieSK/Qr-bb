@@ -29,7 +29,8 @@ body {
     position: relative;
     padding: 20px;
     transition: background 0.5s;
-    overflow: hidden; /* Prevent scrollbars from particles */
+    overflow-x: hidden; /* Keeps the horizontal scrollbars hidden for the particles */
+    overflow-y: auto;   /* Allows vertical scrolling only when the content gets too long */
 }
 
 /* --- BACKGROUND LAYERS --- */
