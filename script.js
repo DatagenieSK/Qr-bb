@@ -104,6 +104,10 @@ function generateRandom(type) {
     else if (type === 'IN') finalCode = "GP" + getRandomDigits(2) + "-IN-IBG-E" + getRandomDigits(4);
     else if (type === 'BL') finalCode = "GP" + getRandomDigits(2) + "-KL-BC-A" + getRandomDigits(4);
     else if (type === 'DS') finalCode = "Z-03-E-3";
+    
+    // Your two new static buttons
+    else if (type === 'SOFTBIN') finalCode = "SOFT-BIN-FL-0"; 
+    else if (type === 'SBIFC') finalCode = "SB_IFC_123456"; 
 
     inputField.value = finalCode;
     makeQR(finalCode, true);
